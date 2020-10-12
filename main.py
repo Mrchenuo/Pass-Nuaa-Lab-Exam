@@ -119,7 +119,7 @@ def take_exam(user_id='sx1801001', password='123456', ans_file='key.xls',
     :param exam_url: 模拟考试或者正式考试页面的链接
     """
 
-    
+
     driver = webdriver.Chrome('C:\Program Files\Google\Chrome\Application/chromedriver.exe')
     # login
     driver.get(login_url)
@@ -179,12 +179,12 @@ def take_exam(user_id='sx1801001', password='123456', ans_file='key.xls',
 
 if __name__ == '__main__':
     # 爬取题库的答案
-    get_answer('SX2016140', 'SX2016140', write_to='D:\GitHub\Pass-Nuaa-Lab-Exam\key.xls')
+    get_answer('SX2016140', 'SX2016140', write_to='key.xls')
 
     exam_url='http://aqzsxx.nuaa.edu.cn/sjd/StartJobMobile.aspx?PaperID=91&Start=yes'
-              
+
     take_exam(user_id='SX2016140',  # 学号
               password='SX2016140',  # 密码
-              ans_file='D:\GitHub\Pass-Nuaa-Lab-Exam\key.xls',  # 答案文件
+              ans_file='key.xls',  # 答案文件
               exam_url=exam_url)
-              
+
