@@ -8,6 +8,7 @@ from lxml import etree
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 
+login_url = 'http://aqzsxx.nuaa.edu.cn/sjd/index.aspx'  #移动端
 
 def merge_excel_files(dir, merge_to):
     """
@@ -81,20 +82,19 @@ def get_answer(user_id='sx1801001', password='123456', write_to='key.xls'):
     ans_list = []
 
     if user_id[:2].lower() == 'sx':
-        select_list = [63, 56, 52, 59, 64]
+        select_list = [117, 121, 122, 123] #每个学院，以及专硕学硕需要了解的知识都不同
     else:
-        select_list = [62, 56, 52, 53, 59, 58, 65]
+        select_list = [117, 121, 122, 123]
 
-    login_url = 'http://aqzsxx.nuaa.edu.cn/'
-    driver = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver')
-
+    driver = webdriver.Chrome('C:\Program Files\Google\Chrome\Application/chromedriver.exe')
     # login
     driver.get(login_url)
-    driver.find_element_by_id('LoginID').send_keys(user_id)
-    driver.find_element_by_id('UserPwd').send_keys(password)
-    driver.find_element_by_id('ButLogin').click()
-    for x in select_list[::-1]:
-        driver.get('http://aqzsxx.nuaa.edu.cn/PersonInfo/StartExercise_Mobile.aspx?Start=yes')
+    driver.find_element_by_id('TextBox1').send_keys(user_id)
+    driver.find_element_by_id('TextBox2').send_keys(password)
+    driver.find_element_by_id('Button1').click()
+
+    for x in select_list:
+        driver.get('http://aqzsxx.nuaa.edu.cn/sjd/StartExercise_Mobile.aspx?Start=yes')
         select = Select(driver.find_element_by_name('drpSubject'))
         select.select_by_value(str(x))
 
@@ -118,14 +118,14 @@ def take_exam(user_id='sx1801001', password='123456', ans_file='key.xls',
     :param ans_file: get_answer() 中获取的答案文件
     :param exam_url: 模拟考试或者正式考试页面的链接
     """
-    login_url = 'http://aqzsxx.nuaa.edu.cn/'
-    driver = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver')
 
+    
+    driver = webdriver.Chrome('C:\Program Files\Google\Chrome\Application/chromedriver.exe')
     # login
     driver.get(login_url)
-    driver.find_element_by_id('LoginID').send_keys(user_id)
-    driver.find_element_by_id('UserPwd').send_keys(password)
-    driver.find_element_by_id('ButLogin').click()
+    driver.find_element_by_id('TextBox1').send_keys(user_id)
+    driver.find_element_by_id('TextBox2').send_keys(password)
+    driver.find_element_by_id('Button1').click()
 
     excel = pd.read_excel(ans_file, header=None)
     ques_list = list(excel.iloc[:, 0])
@@ -138,7 +138,7 @@ def take_exam(user_id='sx1801001', password='123456', ans_file='key.xls',
     while True:
         page_code = driver.page_source
         html = etree.HTML(page_code)
-        question = html.xpath('//div/table/tbody/tr[1]/td/text()')[0]
+        question = html.xpath('/html/body/form/table/tbody/tr[5]/td/table/tbody/tr[1]/td/table/tbody/tr[1]/td/text()')[0]
 
         # 搜索答案
         for i in range(len(ques_list)):
@@ -149,7 +149,8 @@ def take_exam(user_id='sx1801001', password='123456', ans_file='key.xls',
 
                 elif '单选题' in page_code:
                     if len(ans_list[i]) == 1:
-                        driver.find_element_by_xpath('//*[@value="' + ans_list[i] + '"]').click()
+                        # driver.find_element_by_xpath('//*[@value="' + ans_list[i] + '"]').click()
+                        driver.find_element_by_xpath('//tbody/tr/td/input[@value="' + ans_list[i] + '"]').click()
                         break
 
                 else:
@@ -166,11 +167,11 @@ def take_exam(user_id='sx1801001', password='123456', ans_file='key.xls',
             break
 
         driver.find_element_by_name('nextbtn').click()  # 下一题
-
         if not driver.find_element_by_id('nextbtn').is_enabled():  # 检测是否做完
             break_flag = True
 
-    driver.find_element_by_xpath('/html/body/form/table[2]/tbody/tr[4]/td/input[5]').click()  # 点击提交答卷
+    # driver.find_element_by_xpath('/html/body/form/table[2]/tbody/tr[4]/td/input[5]').click()  # 点击提交答卷
+    driver.find_element_by_name('submitbtn3').click()
     driver.find_element_by_xpath('//*[@id="yes"]').click()  # 点击确定
     print("考试已完成!")
     driver.close()
@@ -178,10 +179,12 @@ def take_exam(user_id='sx1801001', password='123456', ans_file='key.xls',
 
 if __name__ == '__main__':
     # 爬取题库的答案
-    # get_answer('sx1801001', '123456', write_to='key.xls')
+    get_answer('SX2016140', 'SX2016140', write_to='D:\GitHub\Pass-Nuaa-Lab-Exam\key.xls')
 
-    # 模式考试
-    take_exam(user_id='sx1801001',  # 学号
-              password='123456',  # 密码
-              ans_file='key.xls',  # 答案文件
-              exam_url='http://aqzsxx.nuaa.edu.cn/PersonInfo/StartJobOne.aspx?PaperID=337&UserID=24740&Start=yes')
+    exam_url='http://aqzsxx.nuaa.edu.cn/sjd/StartJobMobile.aspx?PaperID=91&Start=yes'
+              
+    take_exam(user_id='SX2016140',  # 学号
+              password='SX2016140',  # 密码
+              ans_file='D:\GitHub\Pass-Nuaa-Lab-Exam\key.xls',  # 答案文件
+              exam_url=exam_url)
+              

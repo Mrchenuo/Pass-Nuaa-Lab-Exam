@@ -1,3 +1,33 @@
+# Note
+
+本仓库fork自[Kabibi](https://github.com/Kabibi)/**[Pass-Nuaa-Lab-Exam](https://github.com/Kabibi/Pass-Nuaa-Lab-Exam)**
+
+主要针对页面改动进行相应修改。
+
+## 备注
+
+1. 下载chrome
+
+2. 下载[最新的chromedriver](http://npm.taobao.org/mirrors/chromedriver/) 
+
+​	并更改代码中chromedriver_path字符串为你的路径下的地址
+
+​		![avatar](./img/img3.png)
+
+3. 针对不同的学院，需要更改代码中select_list中的序号，具体查下图中的所有专题
+
+   ![avatar](./img/img4.png)
+
+   ![avatar](./img/img2.png)
+
+
+
+
+
+# 以下是原readme
+
+
+
 # 一分钟通过南航的实验室考试
 
 ## 简介 
