@@ -82,9 +82,15 @@ def get_answer(user_id='sx1801001', password='123456', write_to='key.xls'):
     ans_list = []
 
     if user_id[:2].lower() == 'sx':
-        select_list = [117, 121, 122, 123] #每个学院，以及专硕学硕需要了解的知识都不同
+        # select_list = [117, 118, 119, 120, 121, 122, 123] #每个学院，以及专硕学硕需要了解的知识都不同
+        select_list = [ 118, 119, 120, 121, 122, 123] #每个学院，以及专硕学硕需要了解的知识都不同
+        # select_list = [ 118, 119, 120, 123] #每个学院，以及专硕学硕需要了解的知识都不同
+        # select_list = [ 117] #每个学院，以及专硕学硕需要了解的知识都不同
+
     else:
-        select_list = [117, 121, 122, 123]
+        # select_list = [117, 121, 122, 123]
+        select_list = [117, 118, 119, 120, 121, 122, 123] #每个学院，以及专硕学硕需要了解的知识都不同
+        
 
     driver = webdriver.Chrome('C:\Program Files\Google\Chrome\Application/chromedriver.exe')
     # login
@@ -92,8 +98,14 @@ def get_answer(user_id='sx1801001', password='123456', write_to='key.xls'):
     driver.find_element_by_id('TextBox1').send_keys(user_id)
     driver.find_element_by_id('TextBox2').send_keys(password)
     driver.find_element_by_id('Button1').click()
-
     for x in select_list:
+        #将每个序号x单独存放为一个exl表格
+        str_list=list(write_to)
+        nPos=str_list.index('.')
+        str_list.insert(nPos,str(x))
+        str_2="".join(str_list)
+        # print(str_2)
+        # input()
         driver.get('http://aqzsxx.nuaa.edu.cn/sjd/StartExercise_Mobile.aspx?Start=yes')
         select = Select(driver.find_element_by_name('drpSubject'))
         select.select_by_value(str(x))
@@ -104,9 +116,20 @@ def get_answer(user_id='sx1801001', password='123456', write_to='key.xls'):
             html = etree.HTML(page_code)
             ques_list.append(html.xpath('//*[@id="trTestTypeContent1"]/tbody/tr[1]/td/text()')[0])
             ans_list.append(re.findall(r'答案：(.*?)<', page_code)[0])
+        
+        write2excel([ques_list, ans_list], write_to=str_2, datatype=list)
+        ques_list.clear()
+        ans_list.clear()
 
-    write2excel([ques_list, ans_list], write_to=write_to, datatype=list)
+    
     driver.close()
+    
+
+
+
+    
+
+   
 
 
 def take_exam(user_id='sx1801001', password='123456', ans_file='key.xls',
@@ -134,13 +157,14 @@ def take_exam(user_id='sx1801001', password='123456', ans_file='key.xls',
     driver.get(exam_url)
 
     break_flag = False
+    que_num = 0
 
     while True:
         page_code = driver.page_source
         html = etree.HTML(page_code)
         question = html.xpath('/html/body/form/table/tbody/tr[5]/td/table/tbody/tr[1]/td/table/tbody/tr[1]/td/text()')[0]
-
         # 搜索答案
+        i = 0
         for i in range(len(ques_list)):
             if ques_list[i] in question:
                 if '判断题' in page_code:
@@ -162,9 +186,14 @@ def take_exam(user_id='sx1801001', password='123456', ans_file='key.xls',
                             break
                         except:
                             print("题库中没有找到该题答案，开启猜题模式！")
-
+        
+        que_num = que_num + 1
         if break_flag:
             break
+        if i == len(ques_list) - 1 :            
+            print("未找到题目："+str(que_num)+"---"+question)
+            print("请自己答题")
+            os.system("pause")
 
         driver.find_element_by_name('nextbtn').click()  # 下一题
         if not driver.find_element_by_id('nextbtn').is_enabled():  # 检测是否做完
@@ -179,12 +208,14 @@ def take_exam(user_id='sx1801001', password='123456', ans_file='key.xls',
 
 if __name__ == '__main__':
     # 爬取题库的答案
-    get_answer('SX2016140', 'SX2016140', write_to='D:\GitHub\Pass-Nuaa-Lab-Exam\key.xls')
+    # get_answer('SX2016140', 'SX2016140', write_to='D:\GitHub\Pass-Nuaa-Lab-Exam_1\key_.xls')
+    # merge_excel_files("D:\GitHub\Pass-Nuaa-Lab-Exam_1", "D:\GitHub\Pass-Nuaa-Lab-Exam_1\key.xls")
 
     exam_url='http://aqzsxx.nuaa.edu.cn/sjd/StartJobMobile.aspx?PaperID=91&Start=yes'
               
     take_exam(user_id='SX2016140',  # 学号
               password='SX2016140',  # 密码
-              ans_file='D:\GitHub\Pass-Nuaa-Lab-Exam\key.xls',  # 答案文件
+              ans_file='D:\GitHub\Pass-Nuaa-Lab-Exam_1\key.xls',  # 答案文件
               exam_url=exam_url)
+
               
