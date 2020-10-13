@@ -10,9 +10,9 @@
 
 2. 下载[最新的chromedriver](http://npm.taobao.org/mirrors/chromedriver/) 
 
-​	并更改代码中chromedriver_path字符串为你的路径下的地址
+​	并更改代码中的chromedriver为你的路径下的地址
 
-​		![avatar](./img/img3.png)
+![avatar](./img/img3.png)
 
 3. 针对不同的学院，需要更改代码中select_list中的序号，具体查下图中的所有专题
 
@@ -20,7 +20,9 @@
 
    ![avatar](./img/img2.png)
 
- 4 . 题库中没有的题目，程序进行暂停，自己选好选项后，在程序执行的cmd界面按任意键，程序继续
+4. 题库中没有的题目，程序进行暂停，自己选好选项后，在程序执行的cmd界面按任意键，程序继续。
+
+5. 正式考试会弹出一个alert弹出框，目前处理是程序暂停，手动点确定，然后让程序继续运行。
 
 
 

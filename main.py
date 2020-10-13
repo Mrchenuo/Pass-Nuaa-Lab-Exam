@@ -82,16 +82,11 @@ def get_answer(user_id='sx1801001', password='123456', write_to='key.xls'):
     ans_list = []
 
     if user_id[:2].lower() == 'sx':
-        # select_list = [117, 118, 119, 120, 121, 122, 123] #每个学院，以及专硕学硕需要了解的知识都不同
-        select_list = [ 118, 119, 120, 121, 122, 123] #每个学院，以及专硕学硕需要了解的知识都不同
-        # select_list = [ 118, 119, 120, 123] #每个学院，以及专硕学硕需要了解的知识都不同
-        # select_list = [ 117] #每个学院，以及专硕学硕需要了解的知识都不同
+        select_list = [117, 118, 119, 120, 121, 122, 123] #每个学院，以及专硕学硕需要了解的知识都不同
 
     else:
-        # select_list = [117, 121, 122, 123]
         select_list = [117, 118, 119, 120, 121, 122, 123] #每个学院，以及专硕学硕需要了解的知识都不同
         
-
     driver = webdriver.Chrome('C:\Program Files\Google\Chrome\Application/chromedriver.exe')
     # login
     driver.get(login_url)
@@ -119,18 +114,9 @@ def get_answer(user_id='sx1801001', password='123456', write_to='key.xls'):
         
         write2excel([ques_list, ans_list], write_to=str_2, datatype=list)
         ques_list.clear()
-        ans_list.clear()
-
-    
+        ans_list.clear()  
     driver.close()
     
-
-
-
-    
-
-   
-
 
 def take_exam(user_id='sx1801001', password='123456', ans_file='key.xls',
               exam_url='http://aqzsxx.nuaa.edu.cn/PersonInfo/StartJobOne.aspx?PaperID=273&UserID=24326&Start=yes'):
@@ -155,6 +141,10 @@ def take_exam(user_id='sx1801001', password='123456', ans_file='key.xls',
     ans_list = list(excel.iloc[:, 1])
 
     driver.get(exam_url)
+    #正式考试会有一个absort的弹出框，程序会暂停，手动点确定，然后再让程序运行
+    print("点掉弹出窗")
+    os.system("pause")
+    
 
     break_flag = False
     que_num = 0
@@ -211,10 +201,11 @@ if __name__ == '__main__':
     # get_answer('SX2016140', 'SX2016140', write_to='D:\GitHub\Pass-Nuaa-Lab-Exam_1\key_.xls')
     # merge_excel_files("D:\GitHub\Pass-Nuaa-Lab-Exam_1", "D:\GitHub\Pass-Nuaa-Lab-Exam_1\key.xls")
 
-    exam_url='http://aqzsxx.nuaa.edu.cn/sjd/StartJobMobile.aspx?PaperID=91&Start=yes'
+    # exam_url='http://aqzsxx.nuaa.edu.cn/sjd/StartJobMobile.aspx?PaperID=91&Start=yes'#模拟考试
+    exam_url='http://aqzsxx.nuaa.edu.cn/sjd/StartExamMobile.aspx?PaperID=92&Start=yes' #正式考试
 
-    take_exam(user_id='SX2016140',  # 学号
-              password='SX2016140',  # 密码
+    take_exam(user_id='SX2016141',  # 学号
+              password='SX2016141',  # 密码
               ans_file='D:\GitHub\Pass-Nuaa-Lab-Exam_1\key.xls',  # 答案文件
               exam_url=exam_url)
 
